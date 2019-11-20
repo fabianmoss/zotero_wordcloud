@@ -1,11 +1,8 @@
+import re, sys
 import numpy as np
-from collections import Counter
-import re
 from PIL import Image
 import matplotlib.pyplot as plt
-from wordcloud import WordCloud
-# lower max_font_size, change the maximum number of word and lighten the background:
-from wordcloud import ImageColorGenerator
+from wordcloud import WordCloud, ImageColorGenerator
 
 stop_words = [
     "of", "the", "and", "a", "an",
@@ -17,6 +14,8 @@ stop_words = [
     "has", "two", "through", "der", "which",
     "some", "its", "not", "towards"
     ]
+
+items = ["title", "booktitle", "abstract", "keywords"]
 
 def extract_words(bib_file):
     with open('library.bib', encoding="utf8") as bibtex_file:
@@ -46,7 +45,7 @@ def extract_words(bib_file):
 
         entries.append(entry_dict)
 
-    word_lists = [ entry[item].split() for item in ["title", "booktitle", "abstract", "keywords"] \
+    word_lists = [ entry[item].split() for item in items \
         for entry in entries if item in entry.keys() ]
 
     words = [ w.lower().strip(":") for word_list in word_lists \
@@ -56,7 +55,9 @@ def extract_words(bib_file):
     return text
 
 if __name__ == "__main__":
-    text = extract_words("library.bib")
+    bibfile = "library.bib"
+
+    text = extract_words(bibfile)
 
     # setting mask image
     mask = np.array(Image.open("./econ.png"))
@@ -70,9 +71,17 @@ if __name__ == "__main__":
         max_words=10000,
         relative_scaling=0,
         background_color="white").generate(text)
+
+    # lower max_font_size, change the maximum number of word and lighten the background:
     image_colors = ImageColorGenerator(mask)
+
     plt.figure(figsize=[20,15])
-    plt.imshow(wordcloud.recolor(color_func=image_colors), interpolation="bilinear")
+    plt.imshow(
+        wordcloud.recolor(color_func=image_colors),
+        interpolation="bilinear"
+        )
     plt.axis("off")
-    plt.savefig("wordcloud.pdf")
+
+    outfile = "wordcloud.pdf"
+    plt.savefig(outfile)
     plt.show()
