@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, ImageColorGenerator
+import pandas as pd
 
 stop_words = [
     "of", "the", "and", "a", "an",
@@ -12,8 +13,21 @@ stop_words = [
     "how", "using", "", "can", "it", "new", "-",
     "international", "conference", "be","role",
     "has", "two", "through", "der", "which",
-    "some", "its", "not", "towards"
+    "some", "its", "not", "towards",
+    "introduction", "paper"
     ]
+
+custom_mappings = {
+    "musical" : "music",
+    "harmonic" : "harmony",
+    "music psychology" : "psychology",
+    "music theory" : "theory",
+    "music perception" : "perception",
+    "music cognition" : "cognition",
+    "cognitive" : "cognition",
+    "modelling" : "modeling",
+    "syntactic" : "syntax"
+}
 
 items = ["title", "booktitle", "abstract", "keywords"]
 
@@ -48,8 +62,10 @@ def extract_words(bib_file):
     word_lists = [ entry[item].split() for item in items \
         for entry in entries if item in entry.keys() ]
 
-    words = [ w.lower().strip(":") for word_list in word_lists \
+    words = [ re.sub("[:,\.\-\"\s]*$", "", w.lower()) for word_list in word_lists \
         for w in word_list if w.lower() not in stop_words ]
+
+    words = [ custom_mappings.get(item,item) for item in words ] # custom replacement
 
     text = " ".join(words)
     return text
@@ -68,20 +84,21 @@ if __name__ == "__main__":
         width=2000,
         height=1000,
         contour_color="black",
-        max_words=10000,
+        max_words=1000,
         relative_scaling=0,
         background_color="white").generate(text)
 
     # lower max_font_size, change the maximum number of word and lighten the background:
     image_colors = ImageColorGenerator(mask)
 
-    plt.figure(figsize=[20,15])
+    plt.figure(figsize=[12,8], dpi=300)
     plt.imshow(
         wordcloud.recolor(color_func=image_colors),
         interpolation="bilinear"
         )
     plt.axis("off")
 
+    plt.tight_layout()
     outfile = "wordcloud.pdf"
     plt.savefig(outfile)
-    plt.show()
+    # plt.show()
