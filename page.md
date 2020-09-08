@@ -1,3 +1,7 @@
+---
+layout: page
+---
+
 # This is a new page
 
 Conten jsdf lksjdsd lsjflksj glksjdgf 
