@@ -1,6 +1,7 @@
 theme: minima
 title: Zotero Wordcloud
 author: Fabian C. Moss
+description: Something...
 header_pages:
   - index.md
   - page.md
