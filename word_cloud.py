@@ -118,32 +118,37 @@ if __name__ == "__main__":
     # setting mask image
     # mask = np.array(Image.open("./twitter_header.jpeg"))
 
+    # Twitter header size: 1500px * 500px
+    W = 1500 
+    H = 500
+
     #creating wordcloud
     wordcloud = WordCloud(
-        #mask=mask,
-        width=1500,
-        height=500,
+        # mask=mask,
+        width=W,
+        height=H,
         colormap="Greys",
         normalize_plurals=True,
         collocations=True,
         repeat=False,
         # contour_color="black",
         # max_words=args.topwords if args.topwords < len(text) else len(text),
-        relative_scaling=0.5,
-        #background_color="white"
+        relative_scaling=.5,
+        # background_color="#fff2cc"
         ).generate(text)
 
     # lower max_font_size, change the maximum number of word and lighten the background:
     # image_colors = ImageColorGenerator(plt.get_cmap("Reds"))
 
-    plt.figure(figsize=[15,5], dpi=300)
+    px = 1/plt.rcParams['figure.dpi']  # pixel in inches # https://matplotlib.org/stable/gallery/subplots_axes_and_figures/figure_size_units.html
+    plt.figure(figsize=[W * px, H * px])
     plt.imshow(
         wordcloud, #.recolor(color_func=image_colors),
-        # interpolation="bilinear"
+        interpolation="bilinear"
         )
     plt.axis("off")
 
-    plt.tight_layout()
+    plt.tight_layout(pad=0.)
     outfile = "twitter_header.png"#"wordcloud.pdf"
     plt.savefig(outfile)
     # plt.show()
