@@ -116,33 +116,38 @@ if __name__ == "__main__":
         f.write(text)
 
     # setting mask image
-    mask = np.array(Image.open("./rectangle.png"))
+    # mask = np.array(Image.open("./twitter_header.jpeg"))
 
     #creating wordcloud
     wordcloud = WordCloud(
-        mask=mask,
-        width=1600,
-        height=900,
-        contour_color="black",
-        max_words=args.topwords if args.topwords < len(text) else len(text),
-        relative_scaling=0,
-        background_color="white").generate(text)
+        #mask=mask,
+        width=1500,
+        height=500,
+        colormap="Greys",
+        normalize_plurals=True,
+        collocations=True,
+        repeat=False,
+        # contour_color="black",
+        # max_words=args.topwords if args.topwords < len(text) else len(text),
+        relative_scaling=0.5,
+        #background_color="white"
+        ).generate(text)
 
     # lower max_font_size, change the maximum number of word and lighten the background:
-    image_colors = ImageColorGenerator(mask)
+    # image_colors = ImageColorGenerator(plt.get_cmap("Reds"))
 
-    plt.figure(figsize=[12,8], dpi=300)
+    plt.figure(figsize=[15,5], dpi=300)
     plt.imshow(
-        wordcloud.recolor(color_func=image_colors),
-        interpolation="bilinear"
+        wordcloud, #.recolor(color_func=image_colors),
+        # interpolation="bilinear"
         )
     plt.axis("off")
 
     plt.tight_layout()
-    outfile = "wordcloud.pdf"
+    outfile = "twitter_header.png"#"wordcloud.pdf"
     plt.savefig(outfile)
     # plt.show()
 
-    ## same word counts
+    ## save word counts
     s = pd.Series(text.split("\n"))
     s.value_counts().to_csv("counts.csv")
